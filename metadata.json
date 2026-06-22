@@ -1,0 +1,6 @@
+{
+  "name": "Neurodiverse Children's AI Storybook Generator",
+  "description": "An interactive, sensory-friendly AI storybook creator for neurodiverse children, allowing parents to customize cozy bedtime or adventure stories adjusted to their child's special interests, age, and trigger needs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sky-night: #060919;
+  --color-sky-deep: #0a0e29;
+  --color-sky-soft: #121a47;
+
+  --animate-twinkle-slow: twinkle 6s ease-in-out infinite;
+  --animate-twinkle-medium: twinkle 4s ease-in-out infinite;
+  --animate-twinkle-fast: twinkle 2.5s ease-in-out infinite;
+  --animate-float-cloud: float-cloud 8s ease-in-out infinite;
+  --animate-sway-moon: sway-moon 15s ease-in-out infinite;
+
+  @keyframes twinkle {
+    0%, 100% {
+      opacity: 0.25;
+      transform: scale(0.85);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.15);
+      filter: drop-shadow(0 0 6px rgb(253, 224, 71));
+    }
+  }
+
+  @keyframes float-cloud {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-12px) scale(1.03);
+    }
+  }
+
+  @keyframes sway-moon {
+    0%, 100% {
+      transform: rotate(0deg) translateY(0);
+    }
+    50% {
+      transform: rotate(5deg) translateY(-6px);
+    }
+  }
+}
+
+/* Custom Accessibility & Neurodiverse Dyslexic font helper class */
+.font-dyslexic-friendly {
+  font-family: inherit;
+  letter-spacing: 0.12em;
+  word-spacing: 0.25em;
+  line-height: 2;
+  font-weight: 500;
+}
+
+/* Beautiful scrollbars for cozy aesthetics */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #080c25;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e295d;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2d3e85;
+}
