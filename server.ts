@@ -12,12 +12,10 @@ async function startServer() {
 
   app.use(express.json());
 
-  // Initialize Gemini API client lazily inside API routes or at startup but shield with safe check
-  const apiKey = process.env.GEMINI_API_KEY;
-
   app.post("/api/generate-story", async (req, res) => {
     try {
-      if (!apiKey) {
+      const currentApiKey = process.env.GEMINI_API_KEY;
+      if (!currentApiKey) {
         return res.status(500).json({
           error: "Gemini API key is not configured. Please add your GEMINI_API_KEY in the Secrets panel."
         });
@@ -34,7 +32,7 @@ async function startServer() {
       }
 
       const ai = new GoogleGenAI({
-        apiKey,
+        apiKey: currentApiKey,
         httpOptions: {
           headers: {
             "User-Agent": "aistudio-build",
