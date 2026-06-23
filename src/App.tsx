@@ -174,7 +174,7 @@ export default function App() {
             <a
               href="#/"
               id="nav-home-link"
-              className={`px-3 md:px-4 py-2 rounded-xl font-semibold transition-all ${
+              className={`px-3 md:px-4 py-2 rounded-xl font-semibold transform hover:scale-[1.03] active:scale-[0.97] transition-all duration-200 ${
                 currentHash === "#/" || currentHash === ""
                   ? "bg-indigo-600/20 text-indigo-200 border border-indigo-500/20"
                   : "text-slate-400 hover:text-slate-200"
@@ -186,7 +186,7 @@ export default function App() {
             <a
               href="#/create"
               id="nav-create-link"
-              className={`px-3 md:px-4 py-2 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 md:px-4 py-2 rounded-xl font-bold transform hover:scale-[1.03] active:scale-[0.97] transition-all duration-200 flex items-center gap-1.5 ${
                 currentHash === "#/create"
                   ? "bg-amber-300 text-slate-950 shadow-md"
                   : "bg-indigo-950/40 text-slate-355 hover:bg-slate-800/80 hover:text-white border border-indigo-900/30"
@@ -199,7 +199,7 @@ export default function App() {
             <a
               href="#/about-us"
               id="nav-about-link"
-              className={`px-2.5 md:px-3.5 py-2 rounded-xl font-semibold transition-all ${
+              className={`px-2.5 md:px-3.5 py-2 rounded-xl font-semibold transform hover:scale-[1.03] active:scale-[0.97] transition-all duration-200 ${
                 currentHash === "#/about-us"
                   ? "bg-indigo-600/20 text-indigo-200 border border-indigo-500/20"
                   : "text-slate-400 hover:text-slate-200"
@@ -211,7 +211,7 @@ export default function App() {
             <a
               href="#/why-us"
               id="nav-why-link"
-              className={`px-2.5 md:px-3.5 py-2 rounded-xl font-semibold transition-all ${
+              className={`px-2.5 md:px-3.5 py-2 rounded-xl font-semibold transform hover:scale-[1.03] active:scale-[0.97] transition-all duration-200 ${
                 currentHash === "#/why-us"
                   ? "bg-indigo-600/20 text-indigo-200 border border-indigo-500/20"
                   : "text-slate-400 hover:text-slate-200"
@@ -223,7 +223,7 @@ export default function App() {
             <a
               href="#/author"
               id="nav-author-link"
-              className={`px-2.5 md:px-3.5 py-2 rounded-xl font-semibold transition-all ${
+              className={`px-2.5 md:px-3.5 py-2 rounded-xl font-semibold transform hover:scale-[1.03] active:scale-[0.97] transition-all duration-200 ${
                 currentHash === "#/author"
                   ? "bg-indigo-600/20 text-indigo-200 border border-indigo-500/20"
                   : "text-slate-400 hover:text-slate-200"
