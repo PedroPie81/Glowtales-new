@@ -88,10 +88,10 @@ Provide the output strictly in the following JSON format:
   ]
 }`;
 
-      console.log(`Requesting story generation for ${name} (${age}yo), interests: ${interests}, style: ${style}, length: ${length} (${wordCount} words)`);
+      console.log(`Requesting story generation for ${finalName} (${finalAge}yo), interests: ${interests}, style: ${style}, length: ${length} (${wordCount} words)`);
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-3.1-flash-lite",
         contents: prompt,
         config: {
           responseMimeType: "application/json",

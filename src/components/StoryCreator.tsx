@@ -68,12 +68,17 @@ export default function StoryCreator({ onStoryCreated, isLoading, setIsLoading }
         body: JSON.stringify(params)
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to contact stardust engines.");
+      const responseText = await response.text();
+      let rawStory: any;
+      try {
+        rawStory = JSON.parse(responseText);
+      } catch (parseErr) {
+        throw new Error(`The stardust engine returned an invalid format. Details: ${responseText.slice(0, 200)}`);
       }
 
-      const rawStory = await response.json();
+      if (!response.ok) {
+        throw new Error(rawStory.error || "Failed to contact stardust engines.");
+      }
       
       // Construct final Story object with local identifiers and metadata
       const finalStory: Story = {
