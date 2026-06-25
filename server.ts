@@ -14,6 +14,21 @@ async function startServer() {
 
   app.use(express.json());
 
+  // Logging middleware for diagnostic troubleshooting
+  app.use((req, res, next) => {
+    console.log(`[Diagnostic Log] ${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+  });
+
+  // Diagnostic GET endpoint to verify routing health
+  app.get("/api/generate-story", (req, res) => {
+    res.json({
+      status: "active",
+      message: "The stardust story composer endpoint is healthy and ready to receive POST requests.",
+      timestamp: new Date().toISOString()
+    });
+  });
+
   app.post("/api/generate-story", async (req, res) => {
     try {
       const currentApiKey = process.env.GEMINI_API_KEY;
