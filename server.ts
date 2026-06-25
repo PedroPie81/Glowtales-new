@@ -8,6 +8,8 @@ dotenv.config();
 
 async function startServer() {
   const app = express();
+  // Bind the server to the port specified by the environment, defaulting to 3000.
+  // This ensures seamless compatibility with both local development and containerized Cloud Run deployments.
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
   app.use(express.json());
