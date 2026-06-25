@@ -8,9 +8,9 @@ dotenv.config();
 
 async function startServer() {
   const app = express();
-  // Bind the server to the port specified by the environment, defaulting to 3000.
-  // This ensures seamless compatibility with both local development and containerized Cloud Run deployments.
-  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  // Port 3000 is the ONLY externally accessible port in AI Studio's environment.
+  // The reverse proxy maps external traffic exclusively to port 3000.
+  const PORT = 3000;
 
   app.use(express.json());
 
@@ -144,10 +144,16 @@ Provide the output strictly in the following JSON format:
     app.use(vite.middlewares);
   } else {
     let distPath = path.join(process.cwd(), "dist");
-    const currentDir = typeof __dirname !== "undefined" ? __dirname : process.cwd();
-    if (!fs.existsSync(path.join(distPath, "index.html")) && fs.existsSync(path.join(currentDir, "index.html"))) {
-      distPath = currentDir;
+    
+    if (typeof __dirname !== "undefined") {
+      if (fs.existsSync(path.join(__dirname, "index.html"))) {
+        distPath = __dirname;
+      } else if (fs.existsSync(path.join(__dirname, "dist", "index.html"))) {
+        distPath = path.join(__dirname, "dist");
+      }
     }
+    
+    console.log(`Production mode: serving static files from ${distPath}`);
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
