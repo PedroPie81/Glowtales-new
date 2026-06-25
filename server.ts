@@ -106,7 +106,7 @@ Provide the output strictly in the following JSON format:
       console.log(`Requesting story generation for ${finalName} (${finalAge}yo), interests: ${interests}, style: ${style}, length: ${length} (${wordCount} words)`);
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.1-flash-lite",
+        model: "gemini-3.5-flash",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
