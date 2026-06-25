@@ -3,6 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
+import fs from "fs";
 
 dotenv.config();
 
@@ -131,14 +132,20 @@ Provide the output strictly in the following JSON format:
   });
 
   // Serve static UI assets and wire up server
-  if (process.env.NODE_ENV !== "production") {
+  const isCjs = typeof __filename !== "undefined";
+  const isProduction = process.env.NODE_ENV === "production" || (isCjs && __filename.endsWith(".cjs")) || !fs.existsSync(path.join(process.cwd(), "server.ts"));
+  if (!isProduction) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), "dist");
+    let distPath = path.join(process.cwd(), "dist");
+    const currentDir = typeof __dirname !== "undefined" ? __dirname : process.cwd();
+    if (!fs.existsSync(path.join(distPath, "index.html")) && fs.existsSync(path.join(currentDir, "index.html"))) {
+      distPath = currentDir;
+    }
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
