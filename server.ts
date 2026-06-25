@@ -1,6 +1,6 @@
 import express from "express";
 import path from "path";
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 import fs from "fs";
 
@@ -111,20 +111,20 @@ Provide the output strictly in the following JSON format:
         config: {
           responseMimeType: "application/json",
           responseSchema: {
-            type: Type.OBJECT,
+            type: "OBJECT",
             required: ["title", "moral", "pages"],
             properties: {
-              title: { type: Type.STRING },
-              moral: { type: Type.STRING },
+              title: { type: "STRING" },
+              moral: { type: "STRING" },
               pages: {
-                type: Type.ARRAY,
+                type: "ARRAY",
                 items: {
-                  type: Type.OBJECT,
+                  type: "OBJECT",
                   required: ["pageNumber", "text", "illustrationPrompt"],
                   properties: {
-                    pageNumber: { type: Type.INTEGER },
-                    text: { type: Type.STRING },
-                    illustrationPrompt: { type: Type.STRING }
+                    pageNumber: { type: "INTEGER" },
+                    text: { type: "STRING" },
+                    illustrationPrompt: { type: "STRING" }
                   }
                 }
               }
@@ -149,15 +149,24 @@ Provide the output strictly in the following JSON format:
 
   // Serve static UI assets and wire up server
   const isCjs = typeof __filename !== "undefined";
-  const isProduction = process.env.NODE_ENV === "production" || (isCjs && __filename.endsWith(".cjs")) || !fs.existsSync(path.join(process.cwd(), "server.ts"));
+  let isProduction = process.env.NODE_ENV === "production" || (isCjs && __filename.endsWith(".cjs")) || !fs.existsSync(path.join(process.cwd(), "server.ts"));
+  
   if (!isProduction) {
-    const { createServer } = await import("vite");
-    const vite = await createServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
+    try {
+      const { createServer } = await import("vite");
+      const vite = await createServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+      console.log("Vite dev middleware mounted successfully.");
+    } catch (viteError) {
+      console.warn("Could not load Vite dev server middleware, falling back to static production serving:", viteError);
+      isProduction = true;
+    }
+  }
+
+  if (isProduction) {
     let distPath = path.join(process.cwd(), "dist");
     
     if (typeof __dirname !== "undefined") {
