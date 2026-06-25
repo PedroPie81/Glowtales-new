@@ -8,9 +8,9 @@ dotenv.config();
 
 async function startServer() {
   const app = express();
-  // In development, AI Studio's reverse proxy maps external traffic exclusively to port 3000.
-  // In production (Cloud Run), the platform assigns a dynamic port via process.env.PORT.
-  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  // Port 3000 is the ONLY externally accessible port in AI Studio's environment.
+  // The reverse proxy maps external traffic exclusively to port 3000.
+  const PORT = 3000;
 
   app.use(express.json());
 
