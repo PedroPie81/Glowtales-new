@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 import fs from "fs";
@@ -9,7 +8,7 @@ dotenv.config();
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
   app.use(express.json());
 
@@ -135,7 +134,8 @@ Provide the output strictly in the following JSON format:
   const isCjs = typeof __filename !== "undefined";
   const isProduction = process.env.NODE_ENV === "production" || (isCjs && __filename.endsWith(".cjs")) || !fs.existsSync(path.join(process.cwd(), "server.ts"));
   if (!isProduction) {
-    const vite = await createViteServer({
+    const { createServer } = await import("vite");
+    const vite = await createServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
