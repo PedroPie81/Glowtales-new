@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Story } from "./types";
 import { SAMPLE_STORIES } from "./data";
 import StarryBackground from "./components/StarryBackground";
+import CelestialHeader from "./components/CelestialHeader";
 import StoryReader from "./components/StoryReader";
 import StoryCreator from "./components/StoryCreator";
 import AboutUs from "./components/AboutUs";
@@ -239,6 +240,9 @@ export default function App() {
       {/* Main Core Router Workspace */}
       <main id="main-workspace" className="flex-grow w-full max-w-6xl px-4 md:px-6 py-8 flex flex-col justify-center relative z-10">
         
+        {/* Realistic Moon and Clouds Celestial Header Accent */}
+        <CelestialHeader />
+
         {/* If Story Reader is ACTIVE, we override rendering on that container instantly */}
         {activeStory ? (
           <AnimatePresence mode="wait">
@@ -263,60 +267,6 @@ export default function App() {
             {/* HOME / BOOKSHELF VIEW */}
             {(currentHash === "#/" || currentHash === "") && (
               <div id="home-view" className="space-y-8">
-                
-                {/* Cozy Moon and Silver Clouds Header Accent */}
-                <div className="w-full flex justify-center items-center gap-12 py-2 relative select-none">
-                  {/* Left Silver Cloud */}
-                  <motion.div 
-                    animate={{ x: [-8, 8, -8], y: [-2, 2, -2] }} 
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                    className="hidden md:flex items-center opacity-60"
-                  >
-                    <svg className="w-20 h-10 text-slate-300/70 filter drop-shadow-[0_2px_8px_rgba(255,255,255,0.15)]" fill="currentColor" viewBox="0 0 100 50">
-                      <path d="M20 40a15 15 0 0 1 1-29.9 18 18 0 0 1 33.7-4.1 15 15 0 0 1 25.3 12 15 15 0 0 1 5 22h-65z" />
-                    </svg>
-                  </motion.div>
-
-                  {/* Cozy Glowy Moon in center */}
-                  <motion.div 
-                    animate={{ y: [-4, 4, -4], rotate: [-1, 1, -1] }} 
-                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                    className="relative flex items-center justify-center"
-                  >
-                    {/* Soft ambient golden glow */}
-                    <div className="absolute w-24 h-24 bg-amber-300/20 rounded-full blur-2xl animate-pulse" />
-                    {/* Crescent Moon */}
-                    <svg className="w-20 h-20 text-yellow-250 fill-yellow-200 filter drop-shadow-[0_0_15px_rgba(251,191,36,0.45)]" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="0.5">
-                      <path d="M12.3 22H12c-5.5 0-10-4.5-10-10S6.5 2 12 2c.8 0 1.6.1 2.4.3-.7.7-1.1 1.6-1.1 2.7 0 2.2 1.8 4 4 4 1.1 0 2-.4 2.7-1.1.2.8.3 1.6.3 2.4 0 5.5-4.5 10-10 10z" />
-                    </svg>
-                    {/* Animated Cozy Zzzs */}
-                    <motion.span 
-                      animate={{ y: [-5, -20], x: [0, 5], opacity: [0, 1, 0] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "easeOut", delay: 0 }}
-                      className="absolute top-2 right-1 text-yellow-300 font-bold text-xs select-none font-serif"
-                    >
-                      z
-                    </motion.span>
-                    <motion.span 
-                      animate={{ y: [-5, -25], x: [0, 8], opacity: [0, 1, 0] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "easeOut", delay: 1.5 }}
-                      className="absolute top-0 -right-2 text-yellow-405 font-bold text-sm select-none font-serif"
-                    >
-                      Z
-                    </motion.span>
-                  </motion.div>
-
-                  {/* Right Silver Cloud */}
-                  <motion.div 
-                    animate={{ x: [8, -8, 8], y: [2, -2, 2] }} 
-                    transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-                    className="flex items-center opacity-75"
-                  >
-                    <svg className="w-24 h-12 text-slate-200/80 filter drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)]" fill="currentColor" viewBox="0 0 100 50">
-                      <path d="M20 40a15 15 0 0 1 1-29.9 18 18 0 0 1 33.7-4.1 15 15 0 0 1 25.3 12 15 15 0 0 1 5 22h-65z" />
-                    </svg>
-                  </motion.div>
-                </div>
 
                 {/* Hero Splash Area */}
                 <div className="text-center max-w-3xl mx-auto py-4">

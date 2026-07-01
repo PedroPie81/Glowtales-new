@@ -119,40 +119,81 @@ Provide the output strictly in the following JSON format:
 
     console.log(`Requesting story generation for ${finalName} (${finalAge}yo), interests: ${interests}, style: ${style}, length: ${length} (${wordCount} words)`);
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "OBJECT",
-          required: ["title", "moral", "pages"],
-          properties: {
-            title: { type: "STRING" },
-            moral: { type: "STRING" },
-            pages: {
-              type: "ARRAY",
-              items: {
+    const modelsToTry = ["gemini-3.5-flash", "gemini-3.1-flash-lite"];
+    let responseText = "";
+    let lastError: any = null;
+
+    for (const currentModel of modelsToTry) {
+      console.log(`[Story generation] Attempting with model: ${currentModel}`);
+      let delay = 1000;
+      const maxRetries = 2; // 2 retries per model
+      
+      for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
+        try {
+          const response = await ai.models.generateContent({
+            model: currentModel,
+            contents: prompt,
+            config: {
+              responseMimeType: "application/json",
+              responseSchema: {
                 type: "OBJECT",
-                required: ["pageNumber", "text", "illustrationPrompt"],
+                required: ["title", "moral", "pages"],
                 properties: {
-                  pageNumber: { type: "INTEGER" },
-                  text: { type: "STRING" },
-                  illustrationPrompt: { type: "STRING" }
+                  title: { type: "STRING" },
+                  moral: { type: "STRING" },
+                  pages: {
+                    type: "ARRAY",
+                    items: {
+                      type: "OBJECT",
+                      required: ["pageNumber", "text", "illustrationPrompt"],
+                      properties: {
+                        pageNumber: { type: "INTEGER" },
+                        text: { type: "STRING" },
+                        illustrationPrompt: { type: "STRING" }
+                      }
+                    }
+                  }
                 }
               }
             }
+          });
+
+          if (response.text) {
+            responseText = response.text;
+            console.log(`[Story generation] Successfully generated story using model: ${currentModel}`);
+            break; // Successful! Escape the retry loop
+          }
+        } catch (error: any) {
+          lastError = error;
+          console.warn(`[Story generation] Model ${currentModel} - Attempt ${attempt} failed:`, error?.message || error);
+          
+          const isTransient = error?.message?.includes("503") || 
+                              error?.status === "UNAVAILABLE" || 
+                              JSON.stringify(error)?.includes("503") ||
+                              JSON.stringify(error)?.includes("UNAVAILABLE") ||
+                              error?.message?.includes("high demand") ||
+                              error?.message?.includes("temporary");
+          
+          if (isTransient && attempt <= maxRetries) {
+            console.log(`[Story generation] Transient error. Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            delay *= 1.5;
+          } else {
+            break; // Break the retry loop to try the fallback model or bubble up
           }
         }
       }
-    });
 
-    const textOutput = response.text;
-    if (!textOutput) {
-      throw new Error("Empty text returned from generative model.");
+      if (responseText) {
+        break; // Successfully got response from a model! Escape the model loop
+      }
     }
 
-    const parsedData = JSON.parse(textOutput.trim());
+    if (!responseText) {
+      throw lastError || new Error("Failed to generate story after trying multiple models and retries. Please wait a brief moment and try again.");
+    }
+
+    const parsedData = JSON.parse(responseText.trim());
     return res.json(parsedData);
 
   } catch (error: any) {
