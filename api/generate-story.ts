@@ -1,12 +1,22 @@
 import { GoogleGenAI } from "@google/genai";
+import fs from "fs";
+import path from "path";
 
 export default async function handler(req: any, res: any) {
   // Support both GET (for diagnostics) and POST (for generation)
   if (req.method === "GET") {
+    const envKeys = Object.keys(process.env);
     return res.json({
       status: "active",
       message: "The stardust story composer endpoint is healthy and ready to receive POST requests.",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      debugInfo: {
+        envKeys: envKeys,
+        hasGeminiKey: envKeys.some(k => k.toUpperCase() === "GEMINI_API_KEY"),
+        nodeEnv: process.env.NODE_ENV,
+        cwd: process.cwd(),
+        hasEnvFile: fs.existsSync(path.join(process.cwd(), ".env"))
+      }
     });
   }
 
@@ -16,10 +26,29 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const currentApiKey = process.env.GEMINI_API_KEY;
+    const envKeys = Object.keys(process.env);
+    console.log("[Diagnostic Keys] Available environment variables:", envKeys);
+    
+    // In some environments, the key might be in lowercase or have space prefixes
+    let currentApiKey = process.env.GEMINI_API_KEY;
+    if (!currentApiKey) {
+      // Let's do a case-insensitive lookup
+      const foundKey = envKeys.find(k => k.toUpperCase() === "GEMINI_API_KEY");
+      if (foundKey) {
+        currentApiKey = process.env[foundKey];
+        console.log(`[Diagnostic] Found Gemini API Key via case-insensitive match: ${foundKey}`);
+      }
+    }
+
     if (!currentApiKey) {
       return res.status(500).json({
-        error: "Gemini API key is not configured. Please add your GEMINI_API_KEY in the Secrets panel."
+        error: "Gemini API key is not configured. Please add your GEMINI_API_KEY in the Secrets panel.",
+        debugInfo: {
+          envKeys: envKeys,
+          hasEnvFile: fs.existsSync(path.join(process.cwd(), ".env")),
+          nodeEnv: process.env.NODE_ENV,
+          cwd: process.cwd()
+        }
       });
     }
 
