@@ -149,8 +149,13 @@ Provide the output strictly in the following JSON format:
 
   // Serve static UI assets and wire up server
   const isCjs = typeof __filename !== "undefined";
-  let isProduction = process.env.NODE_ENV === "production" || (isCjs && __filename.endsWith(".cjs")) || !fs.existsSync(path.join(process.cwd(), "server.ts"));
+  const isProduction = 
+    process.env.NODE_ENV === "production" || 
+    (isCjs && __filename.endsWith(".cjs")) || 
+    !fs.existsSync(path.join(process.cwd(), "server.ts"));
   
+  let viteDevServerMounted = false;
+
   if (!isProduction) {
     try {
       const { createServer } = await import("vite");
@@ -160,13 +165,14 @@ Provide the output strictly in the following JSON format:
       });
       app.use(vite.middlewares);
       console.log("Vite dev middleware mounted successfully.");
+      viteDevServerMounted = true;
     } catch (viteError) {
       console.warn("Could not load Vite dev server middleware, falling back to static production serving:", viteError);
-      isProduction = true;
     }
   }
 
-  if (isProduction) {
+  // Fallback to static serving if we are in production or Vite dev server failed to mount
+  if (isProduction || !viteDevServerMounted) {
     let distPath = path.join(process.cwd(), "dist");
     
     if (typeof __dirname !== "undefined") {
@@ -177,11 +183,19 @@ Provide the output strictly in the following JSON format:
       }
     }
     
-    console.log(`Production mode: serving static files from ${distPath}`);
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
+    console.log(`Serving static files from ${distPath}`);
+    
+    if (fs.existsSync(path.join(distPath, "index.html"))) {
+      app.use(express.static(distPath));
+      app.get("*", (req, res) => {
+        res.sendFile(path.join(distPath, "index.html"));
+      });
+    } else {
+      console.error(`CRITICAL ERROR: static files directory "${distPath}" or index.html does not exist.`);
+      app.get("*", (req, res) => {
+        res.status(500).send("Application static build files (dist/) not found. Please compile the application.");
+      });
+    }
   }
 
   app.listen(PORT, "0.0.0.0", () => {
